@@ -8,6 +8,8 @@ from django.core import serializers
 from ahtung_api.models import Person, Group, Signal, EnabledSignal
 from ahtung_api.populate_db import populate
 
+from uuid import uuid4
+
 class AhtungApi:
     COMMAND_GET_USERS = "get_users"
     COMMAND_JOIN_GROUP = "join_group"
@@ -47,6 +49,7 @@ class ApiView(View):
             person = Person(group=group, name=name, registration_id=registration_id)
             person.save()
             data = "Person {0} added".format(person.pk)
+
         elif action == AhtungApi.COMMAND_LEAVE_GROUP:
             registration_id = params['registration_id']
             person = Person.objects.get(registration_id__exact=registration_id)
@@ -55,7 +58,15 @@ class ApiView(View):
             data = "Person {0} deleted".format(person_pk)
 
         elif action == AhtungApi.COMMAND_CREATE_GROUP:
-            Group()
+            group = Group(group_id="{0:x}".format(uuid4().time_low))
+            group.save()
+            data = "Group {0} with uuid {1} added.".format(group.pk, group.group_id)
+
+        elif action == AhtungApi.COMMAND_SEND_SIGNAL:
+            registration_id = params['registration_id']
+            person = Person.objects.get(registration_id__exact=registration_id)
+            persons = Person.objects.filter(group=person.group)
+            data = serializers.serialize("json", persons, indent=2)
 
         return HttpResponse(data, content_type="text/json")
 

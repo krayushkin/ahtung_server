@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from models import Person, Group, Signal, EnabledSignal
+from ahtung_api.models import Person, Group, Signal, EnabledSignal
 
 def populate():
     s1 = Signal(name="Alarm", signal_id="1")
