@@ -5,7 +5,7 @@ from ahtung_api.views import ApiView, PopulateView
 
 urlpatterns = patterns('',
         url(r'populate$', PopulateView.as_view()),
-		url(r'$', ApiView.as_view()),
+		url(r'(?P<action>.*)$', ApiView.as_view()),
         
 
     # Examples:

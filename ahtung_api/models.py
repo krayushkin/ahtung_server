@@ -6,7 +6,7 @@ class Person(models.Model):
     group = models.ForeignKey('Group')
     registration_id = models.CharField(max_length=100, unique=True)
     def __unicode__(self):
-	    return u"{0} | {1} | {2}".format(self.name, self.registration_id, self.group.pk)
+        return u"{0} | {1} | {2}".format(self.name, self.registration_id, self.group.pk)
 
 class Group(models.Model):
     group_id = models.CharField(max_length=100, unique=True)

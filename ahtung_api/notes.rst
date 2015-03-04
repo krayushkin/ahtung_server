@@ -1,22 +1,24 @@
 Ahtung server api documentation
 ===============================
 
-Ahtung server accept commands in form of HTTP POST requests.
-Address of api server is `http://API_HOST/api`
+Ahtung server accept commands in form of HTTP GET or POST requests.
+Address of api server is `http://API_HOST/api/ACTION`, where ACTION is one of function name
 
-Command arguments sends via JSON format.
+Command arguments sends via url parameters.
+Request body must be empty. For some commands must be provided request body in application/json format.
+
+Example of parameters:
 
 ::
-  
-  {
-      "action" : "API_FUNCTION_NAME",
-      "args" : 
-          {
-              RESULT_STRUCTURE
-          }
-  }
 
-Result returns in JSON format too.
+  "arg1" : "value1"
+  "arg2" : "value2"
+
+Url for this example:  `http://API_HOST/api/ACTION?arg1=value1&arg2=value2`
+
+Format of request body described in command description.
+
+Result returns in JSON format.
 
 ::
 
@@ -32,7 +34,9 @@ Result returns in JSON format too.
 Command list
 ------------
 
-1. `action` = `get_users`
+
+`GET api/get_users`
+~~~~~~~~~~~~~~~~~~~
 
 Get list of persons names in given group.
 
@@ -40,13 +44,7 @@ Request:
 
 ::
 
-  {
-      "action" : "get_users",
-      "args" : 
-          {
-              "group_id" = "GROUP_ID"
-          }
-  }
+  "group_id" = "GROUP_ID"
 
 Response:
 
@@ -61,24 +59,20 @@ Response:
   }
 
 
-2. `action` = `join_group`
+`POST join_group`
+~~~~~~~~~~~~~~~~~
 
 Register new user in given group.
 If user already exist in other group, it will be removed from old group end registered in new given one.
 Returns enabled signals.
+
 Request:
 
 ::
 
-  {
-      "action" : "join_group",
-      "args" : 
-          {
-              "group_id" = "GROUP_ID",
-              "registration_id" = "REGISTRATION_ID",
-              "name" = "NAME_1"
-          }
-  }
+  "group_id" = "GROUP_ID",
+  "registration_id" = "REGISTRATION_ID",
+  "name" = "NAME_1"
 
 Response:
 
@@ -86,13 +80,14 @@ Response:
 
   {
       "status" : "STATUS_CODE",
-      "data" : 
+      "data" :
       {
-        "signals" : ["SIGNAL_1", "SIGNAL_2"]
+
       }
   }
 
-3. `action` = `leave_group`
+POST leave_group`
+~~~~~~~~~~~~~~~~~
 
 Deletes given user from database.
 
@@ -100,13 +95,7 @@ Request:
 
 ::
 
-  {
-      "action" : "leave_group",
-      "args" : 
-          {
               "registration_id" = "REGISTRATION_ID"
-          }
-  }
 
 Response:
 
@@ -117,21 +106,21 @@ Response:
   }
 
 
-4. `action` = `create_group`
+`POST api/create_group`
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Group recurse must be provided in request body.
 
 Create group with enabled signals and return GROUP_ID.
 
 Request:
 
-::
+For this command arguments must be provided in request body.
 
-  {
-      "action" : "create_group"
-      "args" : 
-      {
-          "signals" : ["SIGNAL_1", "SIGNAL_2", ...]
-      }
-  }
+::
+{
+  "signals" : ["SIGNAL_1", "SIGNAL_2", ...]
+}
 
 Response:
 
@@ -145,27 +134,25 @@ Response:
       }
   }
 
-5. `action` = `send_signal`
-
+`POST api/send_signal`
+~~~~~~~~~~~~~~~~~~~~~~
 
 Request:
 
 ::
 
-  {
-      "action" : "send_signal",
-      "args" : 
-          {
-              "registration_id" : "REGISTRATION_ID",
-              "signal" : "SIGNAL_2"
-          }
-  }
+  "registration_id" : "REGISTRATION_ID",
+  "signal" : "SIGNAL_2"
 
 Response:
 
 ::
 
   {
-      "status" : "STATUS_CODE"
+      "status" : "STATUS_CODE",
+      "data" :
+      {
+          "persons" : ["NAME 1", "NAME 2", ...]
+      }
   }
 
